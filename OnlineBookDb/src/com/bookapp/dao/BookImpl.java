@@ -50,12 +50,11 @@ public class BookImpl implements BookInter {
 	@Override
 	public boolean deleteBook(int bookid) throws BookNotFoundException {
 		Connection connection = ModelDAO.openConnection();
-
+        int isPresent=0;
 		try {
 			ps = connection.prepareStatement(delSql);
 			ps.setInt(1, bookid);
-			ps.executeUpdate();
-
+			isPresent=ps.executeUpdate();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -69,6 +68,9 @@ public class BookImpl implements BookInter {
 				e.printStackTrace();
 			}
 			ModelDAO.closeConnection();
+		}
+		if(isPresent==0) {
+        	throw new BookNotFoundException("Invalid id..");
 		}
 		return false;
 	}
@@ -76,25 +78,21 @@ public class BookImpl implements BookInter {
 	String idSql = "Select * from Book where BookId=?";
 
 	@Override
-	public Book getBookById(int bookid) throws BookNotFoundException {
+	public Book getBookById(int bookid) {
 		Connection connection = ModelDAO.openConnection();
+		ResultSet rs=null;
 		Book book = new Book();
-		boolean isPresent = false;
 		try {
 			ps = connection.prepareStatement(idSql);
 			ps.setInt(1, bookid);
-			ResultSet rs = null;
-			rs.first();
+			rs=ps.executeQuery();
 			while (rs.next()) {
-				isPresent = true;
 				book.setAuthor(rs.getString(1));
 				book.setBookid(rs.getInt(2));
 				book.setCategory(rs.getString(3));
 				book.setTitle(rs.getString(4));
 				book.setPrice(rs.getInt(5));
 			}
-			if (!isPresent)
-				throw new BookNotFoundException("No Books Available");
 
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -110,7 +108,10 @@ public class BookImpl implements BookInter {
 			}
 			ModelDAO.closeConnection();
 		}
-
+		/*
+		 * if (rs==null) throw new BookNotFoundException("No Books Available"); return
+		 * null;
+		 */
 		return book;
 	}
 

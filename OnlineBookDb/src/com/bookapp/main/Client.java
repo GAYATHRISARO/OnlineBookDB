@@ -40,10 +40,10 @@ public class Client {
 			bookRef.addBook(book1);
 			break;
 		case 2:
-			System.out.println("Enter the book id:");
+			System.out.println("Enter the book id to delete:");
 			id = s.nextInt();
 			try {
-				bookRef.deleteBook(id);
+				System.out.println(bookRef.deleteBook(id));
 			} catch (BookNotFoundException e) {
 				System.out.println(e.getMessage());
 			}
@@ -52,7 +52,7 @@ public class Client {
 			System.out.println("Enter the book id:");
 			id = s.nextInt();
 			try {
-				bookRef.getBookById(id);
+				System.out.println(bookRef.getBookById(id));
 			} catch (BookNotFoundException e) {
 				System.out.println(e.getMessage());
 			}
